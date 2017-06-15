@@ -1,0 +1,24 @@
+{
+    "name": "schedule-craft",
+    "version": "0.0.1",
+    "description": "",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon server.js"
+    },
+    "author": "Michael Wolf",
+    "license": "MIT",
+    "dependencies": {
+        "body-parser": "^1.17.2",
+        "express": "^4.15.3",
+        "mongoose": "^4.10.5",
+        "morgan": "^1.8.2"
+    },
+    "devDependencies": {
+        "body-parser": "^1.17.2",
+        "express": "^4.15.3",
+        "mongoose": "^4.10.5",
+        "morgan": "^1.8.2"
+    }
+}
