@@ -10,9 +10,7 @@ const RequesterLinkedAccountsSchema = new Schema({
 
 });
 // build logic in ajax post to query contractors for id and grab info to display
-const AssignedContractors = new Schema({
 
-});
 
 const SuperAdmin = new Schema({
 
@@ -22,27 +20,35 @@ const AgencyAdmin = new Schema({
 
 });
 
+const JobSiteSchema = new Schema({
+    job_site: {
+        location: String,
+        address: String,
+        contact: String,
+        notes: String,
+    }
+});
+
 const AppointmentsSchema = new Schema({
-    appointment: {
-        status: {
-            type: String,
-            enum: ['new request', 'contractors_paged', 'contractor_accepted', 'contractor_assigned', 'contractor_confirmed', 'client_notified', 'client_confirmed', 'client_rejected'], // CR logic to onClick contr_paged excluding the previously hired contractor 
-            default: 'reader'
-        },
-        // Go to notes for possible statuses // viable option: set object inside status with several properties and Booleans
-        date: String,
+    status: {
+        type: String,
+        enum: ['new request', 'contractors_paged', 'contractor_accepted', 'contractor_assigned', 'contractor_confirmed', 'client_notified', 'client_confirmed', 'client_rejected'],
+        default: 'reader'
+    },
+    date: String,
+    start_time: String,
+    end_time: String,
+    total_fee: Number,
+    contractor: {
+        type: Schema.Types.ObjectId,
+        ref: 'Contractors',
         start_time: String,
         end_time: String,
-        fee_per_day: Number,
-        fee_per_contractor: Number,
-        contractor: {
-            type: Schema.Types.ObjectId,
-            ref: 'AssignedContractors'
-        },
-        consumer: {
-            fist_name: String,
-            last_initial: String
-        }
+        fee: Number
+    },
+    consumer: {
+        fist_name: String,
+        last_initial: String
     }
 });
 
@@ -54,7 +60,7 @@ const AgencySchedulersSchema = new Schema({
         unique: true,
         match: [/.+\@.+\..+/, "Please enter a valid e-mail address"]
     },
-    password: String, //hashed
+    pwd: String, //hashed
     appointments: [{
         appointment: {
             type: Schema.Types.ObjectId,
@@ -67,10 +73,9 @@ const AgencySchedulersSchema = new Schema({
     }
 });
 
-// q: What if account owner sets themself as the requester?
 // a: Account owner 99% of the time will be the requester
-// q: what can account owner do that requester cannot - analysis for creating SuperRequester role:
-// a1: invite requesters |  view billing information | edit billing information |
+// q: what can account owner do that requester cannot:
+// a: invite requesters |  view billing information | edit billing information |
 const AccountOwnersSchema = new Schema({
     first_name: String,
     last_name: String,
@@ -80,13 +85,11 @@ const AccountOwnersSchema = new Schema({
         match: [/.+\@.+\..+/, "Please enter a valid e-mail address"]
     },
     phone: String,
-    password: String, //hashed
+    pwd: String, //hashed
     job_sites: [{
         job_site: {
-            location: String,
-            address: String,
-            contact: String,
-            notes: String,
+            type: Schema.Types.ObjectId,
+            ref: "JobSites"
         }
     }],
     billing_details: {
@@ -102,10 +105,12 @@ const AccountOwnersSchema = new Schema({
         contractors: Array,
         notes: Array
     },
-    appointments: {
-        type: Schema.Types.ObjectId,
-        ref: "Appointments"
-    },
+    appointments: [{
+        appointment: {
+            type: Schema.Types.ObjectId,
+            ref: "Appointments"
+        }
+    }],
     role: {
         type: String,
         default: "account_owner"
@@ -121,30 +126,30 @@ const RequestersSchema = new Schema({
         match: [/.+\@.+\..+/, "Please enter a valid e-mail address"]
     },
     phone: String,
-    password: String,
+    pwd: String,
     company_name: String,
     linked_accounts: [{
         linked_account: {
             type: Schema.Types.ObjectId, //what will the Requester view from linked account // simply allows requester to request on behalf of?
-            ref: "RequesterLinkedAccounts"
+            ref: "AccountOwners"
         }
     }],
     job_sites: [{
         job_site: {
-            location: String,
-            address: String,
-            contact: String,
-            notes: String,
+            type: Schema.Types.ObjectId,
+            ref: "JobSites"
         }
     }],
     preferences: {
         contractors: Array,
         notes: Array
     },
-    appointments: {
-        type: Schema.Types.ObjectId,
-        ref: "Appointments"
-    },
+    appointments: [{
+        appointment: {
+            type: Schema.Types.ObjectId,
+            ref: "Appointments"
+        }
+    }],
     role: {
         type: String,
         default: "requester"
@@ -168,11 +173,14 @@ const ContractorsSchema = new Schema({
         primary: String,
         secondary: String
     },
-    password: String,
+    pwd: String,
 
-    scheduled_appointments: {
-        appointments: Array
-    },
+    scheduled_appointments: [{
+        appointment: {
+            type: Schema.Types.ObjectId,
+            ref: 'Appointments'
+        }
+    }],
     creds: {
         highest_ed: String,
         rid_certs: Array,
@@ -191,6 +199,7 @@ const ContractorsSchema = new Schema({
         int_exp: String,
         areas_not: String
     },
+    fee: Number,
     role: {
         type: String,
         default: "contractor"
@@ -206,7 +215,7 @@ const ConsumersSchema = new Schema({
         match: [/.+\@.+\..+/, "Please enter a valid e-mail address"]
     },
     phone: String,
-    password: String,
+    pwd: String,
     preferences: {
         contractors: Array,
         notes: Array
@@ -225,8 +234,26 @@ const UsersSchema = new Schema({
     ConsumersSchema
 });
 
+
+const JobSites = mongoose.model('JobSites', JobSiteSchema);
+const AgencyScheduler = mongoose.model('AgencySchedulers', AgencySchedulersSchema);
+const Appointments = mongoose.model('Appointments', AppointmentsSchema);
+const Requesters = mongoose.model('Requesters', RequestersSchema);
+const AccountOwners = mongoose.model('AccountOwners', AccountOwnersSchema);
+const Contractors = mongoose.model('Contractors', ContractorsSchema);
+const Consumers = mongoose.model('Consumers', ConsumersSchema);
+const RequesterLinkedAccounts = mongoose.model('AccountOwners', AccountOwnersSchema);
 const Users = mongoose.model('Users', UsersSchema);
+
+module.exports = JobSites;
+module.exports = AgencyScheduler;
+module.exports = Appointments;
+module.exports = Requesters;
+module.exports = AccountOwners;
+module.exports = Contractors;
+module.exports = Consumers;
 module.exports = Users;
+
 
 
 // ConsumerSchema.plugin(mongooseRole, {
@@ -252,7 +279,7 @@ module.exports = Users;
 //         match: [/.+\@.+\..+/, "Please enter a valid e-mail address"]
 //     },
 //     phone: String,
-//     password: String,
+//     pwd: String,
 //     company_name: String,
 //     job_sites: [{
 //         job_site: {

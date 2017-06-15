@@ -44,7 +44,20 @@ app.get("/", function (req, res) {
 });
 
 app.post("/register", function(req, res) {
-
+    // Update scraped data with comment
+    Users.Users.create(
+        req.params.id, {
+            $push: {
+                comments: {
+                    text: req.body.first_name
+                }
+            }
+        }, { upsert: true, new: true },
+        function (err, data) {
+            if (err) return console.error(err);
+            res.json(data.comments);
+        }
+    );
 });
 
 app.post("/login", function(req, res) {

@@ -7,10 +7,18 @@
 
     <!-- Here we include bootstrap. This will be made available to all of the generated HTML/JS that React generates-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans|Patrick+Hand+SC|Poppins|Quicksand|Shadows+Into+Light|Work+Sans" rel="stylesheet">
 </head>
 
 <body>
     <style>
+        h1 {
+            font-family: 'quicksand', 'raleway', sans-serif;
+            font-style: normal;
+            font-weight: 700;
+            text-align: center;
+        }
+        
         .login-page {
             width: 360px;
             padding: 8% 0 0;
@@ -22,13 +30,25 @@
             z-index: 1;
             background: #FFFFFF;
             max-width: 360px;
-            margin: 0 auto 100px;
+            margin: 0 auto 50px;
             padding: 45px;
             text-align: center;
             box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
         }
         
         .form input {
+            font-family: "Roboto", sans-serif;
+            outline: 0;
+            background: #f2f2f2;
+            width: 100%;
+            border: 0;
+            margin: 0 0 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        
+        .form select {
             font-family: "Roboto", sans-serif;
             outline: 0;
             background: #f2f2f2;
@@ -131,16 +151,24 @@
     </style>
 
     <div class="login-page">
+        <h1>plan putty</h1>
         <div class="form">
             <form class="register-form" action="/register">
-                <input type="text" placeholder="name">
-                <input type="password" placeholder="password">
-                <input type="text" placeholder="email address">
+                <select id="role">
+                    <option>Account Owner</option>
+                    <option>Requester</option>
+                    <option>Contractor</option>
+                    <option>Consumer</option>
+                </select>
+                <input type="text" name="first_name" placeholder="first name">
+                <input type="text" name="last_name" placeholder="last name">
+                <input type="password" name="pwd" placeholder="password">
+                <input type="text" name="email" placeholder="email address">
                 <input type="submit" class="submit" value="register">
                 <p class="message">Already registered? <a href="#">Sign In</a></p>
             </form>
             <form class="login-form" action="/login">
-                <input type="text" placeholder="username">
+                <input type="text" placeholder="email address">
                 <input type="password" placeholder="password">
                 <input type="submit" class="submit" value="login">
                 <p class="message">Not registered? <a href="#">Create an account</a></p>
